@@ -1,18 +1,20 @@
 stages:
   - build
   - push
-#abc
 
 build_and_test:
   stage: build
   tags:
     - mac-runner
   script:
-    - echo "Using local Docker Desktop..."
+    - echo "Cleaning up environment..."
     - docker-compose down --volumes --remove-orphans
+    - echo "Building with GitLab CI Variables..."
     - docker-compose build
     - docker-compose up -d db
-    - sleep 5
+    - echo "Waiting for database to initialize..."
+    - sleep 10
+    - echo "Running tests..."
     - docker-compose run --rm backend npm test
     - docker-compose down
 
@@ -23,7 +25,9 @@ deploy_to_registry:
   only:
     - main
   script:
+    - echo "Logging into GitLab Registry..."
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
-
+    - echo "Building and Pushing images..."
     - docker-compose build
+
     - docker-compose push
