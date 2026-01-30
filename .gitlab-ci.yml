@@ -8,6 +8,7 @@ build_and_test:
     - mac-runner
   script:
     - echo "Cleaning up environment..."
+    - touch .env
     - docker-compose down --volumes --remove-orphans
     - echo "Building with GitLab CI Variables..."
     - docker-compose build
