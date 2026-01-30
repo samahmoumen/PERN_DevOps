@@ -16,6 +16,8 @@ before_script:
 
 build_and_test:
   stage: build
+  tags:
+    - mac-runner
   image: docker:20.10.16
   script:
     - docker-compose build
@@ -25,6 +27,8 @@ build_and_test:
 
 deploy_to_registry:
   stage: push
+  tags:
+    - mac-runner
   image: docker:20.10.16
   only:
     - main
