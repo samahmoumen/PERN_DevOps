@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:15
+    container_name: perndb
+    restart: always
+    environment:
+      POSTGRES_USER: ${TYPEORM_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${TYPEORM_PASSWORD:-9592}
+      POSTGRES_DB: ${TYPEORM_DATABASE:-bug_tracker}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./server
+    container_name: pern_backend
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - db
+    ports:
+      - "${BACKEND_HOST_PORT}:${BACKEND_CONTAINER_PORT}"
+    command: node ./build/server.js
+
+
+
+  frontend:
+    build: ./client
+    container_name: pern_frontend
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+
+volumes:
+  db_data:

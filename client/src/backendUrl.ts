@@ -1,3 +1,3 @@
-const backendUrl = 'https://bugtracker-ad.herokuapp.com';
+const backendUrl = "http://localhost:5002";
 
 export default backendUrl;

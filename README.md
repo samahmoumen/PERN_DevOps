@@ -1,4 +1,4 @@
-# Bug Tracker | PERN-TypeScript
+c# Bug Tracker | PERN-TypeScript
 
 Bug tracking app made with PERN + TS
 

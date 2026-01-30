@@ -1,0 +1,38 @@
+stages:
+  - build
+  - test
+  - push
+
+variables:
+
+  BACKEND_IMAGE: $CI_REGISTRY_IMAGE/backend:$CI_COMMIT_REF_SLUG
+  DOCKER_TLS_CERTDIR: "/certhost"
+
+services:
+  - docker:20.10.16-dind
+
+
+build_and_test:
+  stage: build
+  image: docker:20.10.16
+  script:
+
+    - docker-compose build
+
+
+    - docker-compose up -d db
+
+    - docker-compose run backend npm test
+
+
+    - docker-compose down
+
+deploy_to_registry:
+  stage: push
+  image: docker:20.10.16
+  only:
+    - main
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - docker-compose build
+    - docker-compose push
