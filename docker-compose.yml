@@ -13,6 +13,7 @@ services:
       - db_data:/var/lib/postgresql/data
 
   backend:
+    image: registry.gitlab.com/samahmn98/pern_devops/backend:latest
     build: ./server
     container_name: pern_backend
     restart: always
@@ -27,6 +28,7 @@ services:
 
 
   frontend:
+    image: registry.gitlab.com/samahmn98/pern_devops/frontend:latest
     build: ./client
     container_name: pern_frontend
     restart: always
