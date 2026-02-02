@@ -1,5 +1,4 @@
 variables:
-
   GIT_CLONE_PATH: $CI_BUILDS_DIR/pern-devops
   GIT_STRATEGY: fetch
 
@@ -37,5 +36,4 @@ deploy_to_registry:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
     - echo "Building and Pushing images..."
     - docker-compose build
-
     - docker-compose push
