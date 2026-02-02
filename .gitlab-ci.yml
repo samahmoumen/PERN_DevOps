@@ -1,5 +1,5 @@
 variables:
-  GIT_CLONE_PATH: $CI_BUILDS_DIR/pern-devops
+  GIT_CLONE_PATH: "$CI_BUILDS_DIR/pern-devops"
   GIT_STRATEGY: fetch
 
 stages:
@@ -11,18 +11,29 @@ build_and_test:
   tags:
     - tython-runner
   script:
-    - echo "Project path: $GIT_CLONE_PATH"
+    - echo "Project dir: $CI_PROJECT_DIR"
+    - cd "$CI_PROJECT_DIR"
+
     - echo "Cleaning up environment..."
     - touch .env
-    - docker-compose down --volumes --remove-orphans
-    - echo "Building with GitLab CI Variables..."
-    - docker-compose build
-    - docker-compose up -d db
-    - echo "Waiting for database to initialize..."
+
+
+    - docker compose down --volumes --remove-orphans || true
+
+    - echo "Building images..."
+    - docker compose build
+
+    - echo "Starting database..."
+    - docker compose up -d db
+
+    - echo "Waiting for database..."
     - sleep 10
+
     - echo "Running tests..."
-    - docker-compose run --rm backend npm test || echo "No tests found, skipping..."
-    - docker-compose down
+    - docker compose run --rm backend npm test || echo "No tests found, skipping..."
+
+    - docker compose down
+
 
 deploy_to_registry:
   stage: push
@@ -31,9 +42,16 @@ deploy_to_registry:
   only:
     - main
   script:
+    - echo "Project dir: $CI_PROJECT_DIR"
+    - cd "$CI_PROJECT_DIR"
+
     - touch .env
-    - echo "Logging into GitLab Registry..."
+
+    - echo "Login to GitLab registry..."
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
-    - echo "Building and Pushing images..."
-    - docker-compose build
-    - docker-compose push
+
+    - echo "Build images..."
+    - docker compose build
+
+    - echo "Push images..."
+    - docker compose push
