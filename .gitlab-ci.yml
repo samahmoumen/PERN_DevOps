@@ -1,3 +1,8 @@
+variables:
+
+  GIT_CLONE_PATH: $CI_BUILDS_DIR/pern-devops
+  GIT_STRATEGY: fetch
+
 stages:
   - build
   - push
@@ -5,8 +10,9 @@ stages:
 build_and_test:
   stage: build
   tags:
-    - mac-runner
+    - tython-runner
   script:
+    - echo "Project path: $GIT_CLONE_PATH"
     - echo "Cleaning up environment..."
     - touch .env
     - docker-compose down --volumes --remove-orphans
@@ -22,7 +28,7 @@ build_and_test:
 deploy_to_registry:
   stage: push
   tags:
-    - mac-runner
+    - tython-runner
   only:
     - main
   script:
